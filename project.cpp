@@ -67,13 +67,29 @@ bool DFS_Complete(std::vector<node> &tree, int tree_size)
 	return true;
 }
 
+void clear_ancestors(std::vector<node> &tree, int i, int v)
+{
+	tree[i].bloodline = v;
+	if (tree[i].parent1 != -1) {
+		clear_ancestors(tree, tree[i].parent1, v);
+	}
+	if (tree[i].parent2 != -1) {
+		clear_ancestors(tree, tree[i].parent2, v);
+	}
+}
+
 //TODO: Fix this function
 void DFS_Bloodline(std::vector<node> &tree, int i, int v1, int v2, std::vector<int> &common_ancestors)
 {
 
 	if (tree[i].bloodline == v2) {
 		common_ancestors.push_back(i);
-		std::cout << "Adding " << i << " to common ancestors" << std::endl;
+		if (tree[i].parent1 != -1) {
+			clear_ancestors(tree, tree[i].parent1, v1);
+		}
+		if (tree[i].parent2 != -1) {
+			clear_ancestors(tree, tree[i].parent2, v1);
+		}
 	} else {
 		tree[i].bloodline = v1;
 		if (tree[i].parent1 != -1) {
@@ -95,14 +111,16 @@ int main()
 		std::cout << "-" << std::endl;
 		return 0;
 	}
-	std::cout << "Building tree complete" << std::endl;
 	DFS_Bloodline(tree, v1, v1, v2, common_ancestors);
-	std::cout << "First Bloodline complete" << std::endl;
 	DFS_Bloodline(tree, v2, v2, v1, common_ancestors);
-	std::cout << "Second Bloodline complete" << std::endl;
 	sort(common_ancestors.begin(), common_ancestors.end());
-	for (size_t i = 0; i < common_ancestors.size(); i++) {
-		std::cout << common_ancestors[i] << " ";
+	if (common_ancestors.size() == 0) {
+		std::cout << "-" << std::endl;
+	} else {
+		for (size_t i = 0; i < common_ancestors.size(); i++) {
+			std::cout << common_ancestors[i] << " ";
+		}
+		std::cout << std::endl;
 	}
 	return 0;
 }
