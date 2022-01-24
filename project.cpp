@@ -14,6 +14,7 @@ typedef struct node {
 	int parent1 = -1;	// index
 	int parent2 = -1;
 	int color = white; // used for loop checking
+	bool closest_common_ancestor = false;
 } node;
 
 bool build_tree(std::vector<node> &tree, int edge_number)
@@ -70,6 +71,7 @@ bool DFS_Complete(std::vector<node> &tree, int tree_size)
 void clear_ancestors(std::vector<node> &tree, int i, int v)
 {
 	tree[i].bloodline = v;
+	tree[i].closest_common_ancestor = false;
 	if (tree[i].parent1 != -1) {
 		clear_ancestors(tree, tree[i].parent1, v);
 	}
@@ -79,11 +81,11 @@ void clear_ancestors(std::vector<node> &tree, int i, int v)
 }
 
 //TODO: Fix this function
-void DFS_Bloodline(std::vector<node> &tree, int i, int v1, int v2, std::vector<int> &common_ancestors)
+void DFS_Bloodline(std::vector<node> &tree, int i, int v1, int v2)
 {
 
 	if (tree[i].bloodline == v2) {
-		common_ancestors.push_back(i);
+		tree[i].closest_common_ancestor = true;
 		if (tree[i].parent1 != -1) {
 			clear_ancestors(tree, tree[i].parent1, v1);
 		}
@@ -93,16 +95,18 @@ void DFS_Bloodline(std::vector<node> &tree, int i, int v1, int v2, std::vector<i
 	} else {
 		tree[i].bloodline = v1;
 		if (tree[i].parent1 != -1) {
-			DFS_Bloodline(tree, tree[i].parent1, v1, v2, common_ancestors);
+			DFS_Bloodline(tree, tree[i].parent1, v1, v2);
 		}
 		if (tree[i].parent2 != -1) {
-			DFS_Bloodline(tree, tree[i].parent2, v1, v2, common_ancestors);
+			DFS_Bloodline(tree, tree[i].parent2, v1, v2);
 		}
 	}
 }
 
 int main()
 {
+	bool found = false;
+	std::ios ::sync_with_stdio(false);
 	int v1, v2, tree_size, edge_number;
 	std::cin >> v1 >> v2 >> tree_size >> edge_number;
 	std::vector<node> tree(tree_size + 1); // 0 isn't used, it still works tho :sunglasses:
@@ -111,15 +115,17 @@ int main()
 		std::cout << "-" << std::endl;
 		return 0;
 	}
-	DFS_Bloodline(tree, v1, v1, v2, common_ancestors);
-	DFS_Bloodline(tree, v2, v2, v1, common_ancestors);
-	sort(common_ancestors.begin(), common_ancestors.end());
-	if (common_ancestors.size() == 0) {
+	DFS_Bloodline(tree, v1, v1, v2);
+	DFS_Bloodline(tree, v2, v2, v1);
+	for (size_t i = 0; i < tree.size(); i++) {
+		if (tree[i].closest_common_ancestor) {
+			found = true;
+			std::cout << i << " ";
+		}
+	}
+	if (!found) {
 		std::cout << "-" << std::endl;
 	} else {
-		for (size_t i = 0; i < common_ancestors.size(); i++) {
-			std::cout << common_ancestors[i] << " ";
-		}
 		std::cout << std::endl;
 	}
 	return 0;
