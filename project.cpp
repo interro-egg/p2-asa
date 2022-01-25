@@ -80,7 +80,6 @@ void clear_ancestors(std::vector<node> &tree, int i, int v)
 	}
 }
 
-// TODO: Fix this function
 void DFS_Bloodline(std::vector<node> &tree, int i, int v1, int v2)
 {
 
