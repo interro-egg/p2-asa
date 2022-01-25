@@ -45,10 +45,12 @@ bool DFS_Visit_Complete(std::vector<node> &tree, int i)
 	if (tree[i].color == WHITE) {
 		tree[i].color = GREY;
 		if (tree[i].parent1 != -1) {
-			DFS_Visit_Complete(tree, tree[i].parent1);
+			if (!DFS_Visit_Complete(tree, tree[i].parent1))
+				return false;
 		}
 		if (tree[i].parent2 != -1) {
-			DFS_Visit_Complete(tree, tree[i].parent2);
+			if (!DFS_Visit_Complete(tree, tree[i].parent2))
+				return false;
 		}
 		tree[i].color = BLACK;
 	}
