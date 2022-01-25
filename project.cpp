@@ -112,7 +112,7 @@ int main()
 	std::vector<node> tree(tree_size + 1); // 0 isn't used, it still works tho :sunglasses:
 	std::vector<int> common_ancestors;
 	if (!build_tree(tree, edge_number) || !DFS_Complete(tree, tree_size)) {
-		std::cout << "-" << std::endl;
+		std::cout << "0" << std::endl;
 		return 0;
 	}
 	DFS_Bloodline(tree, v1, v1, v2);
