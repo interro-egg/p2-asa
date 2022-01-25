@@ -3,17 +3,17 @@
 #include <string>
 #include <vector>
 
-enum color {
-	white,
-	grey,
-	black,
+enum COLOR {
+	WHITE, // not visited
+	GREY,  // visiting
+	BLACK, // visited
 };
 
 typedef struct node {
 	int bloodline = -1; // search node's ancestors
 	int parent1 = -1;	// index
 	int parent2 = -1;
-	int color = white; // used for loop checking
+	int color = WHITE; // used for loop checking
 	bool closest_common_ancestor = false;
 } node;
 
@@ -39,27 +39,27 @@ bool build_tree(std::vector<node> &tree, int edge_number)
 
 bool DFS_Visit_Complete(std::vector<node> &tree, int i)
 {
-	if (tree[i].color == grey) {
+	if (tree[i].color == GREY) {
 		return false;
 	}
-	if (tree[i].color == white) {
-		tree[i].color = grey;
+	if (tree[i].color == WHITE) {
+		tree[i].color = GREY;
 		if (tree[i].parent1 != -1) {
 			DFS_Visit_Complete(tree, tree[i].parent1);
 		}
 		if (tree[i].parent2 != -1) {
 			DFS_Visit_Complete(tree, tree[i].parent2);
 		}
-		tree[i].color = black;
+		tree[i].color = BLACK;
 	}
 	return true;
 }
 
-//checks for loops
+// checks for loops
 bool DFS_Complete(std::vector<node> &tree, int tree_size)
 {
 	for (int i = 0; i < tree_size; i++) {
-		if (tree[i].color == white) {
+		if (tree[i].color == WHITE) {
 			if (!DFS_Visit_Complete(tree, i)) {
 				return false;
 			}
@@ -80,7 +80,7 @@ void clear_ancestors(std::vector<node> &tree, int i, int v)
 	}
 }
 
-//TODO: Fix this function
+// TODO: Fix this function
 void DFS_Bloodline(std::vector<node> &tree, int i, int v1, int v2)
 {
 
@@ -105,8 +105,8 @@ void DFS_Bloodline(std::vector<node> &tree, int i, int v1, int v2)
 
 int main()
 {
+	std::ios::sync_with_stdio(false);
 	bool found = false;
-	std::ios ::sync_with_stdio(false);
 	int v1, v2, tree_size, edge_number;
 	std::cin >> v1 >> v2 >> tree_size >> edge_number;
 	std::vector<node> tree(tree_size + 1); // 0 isn't used, it still works tho :sunglasses:
