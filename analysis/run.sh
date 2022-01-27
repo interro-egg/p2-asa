@@ -20,13 +20,14 @@ EDGE_PROB=0.99
 
 g++ -std=c++11 -O3 -Wall randGeneoTree.cpp -lm -o randGeneoTree # there's no need to always compile it, but it's easier this way
 
-echo "V,command,mean,stddev,median,user,system,min,max" > $CSV
+echo "V,E,command,mean,stddev,median,user,system,min,max" > $CSV
 
 test() {
 	echo "Testing with V = $1"
 	./randGeneoTree $1 $EDGE_PROB > in.txt
+	EDGES=$(head in.txt -n2 | tail -n1 | cut -d' ' -f2)
 	hyperfine "$EXE < in.txt" --warmup 10 --export-csv tmp.csv &>/dev/null
-	echo -n $1, >> $CSV
+	echo -n $1,$EDGES, >> $CSV
 	grep ./project tmp.csv >> $CSV # remove header
 	rm in.txt
 	rm tmp.csv
